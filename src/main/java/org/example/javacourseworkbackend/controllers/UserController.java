@@ -24,8 +24,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/updateUser/{id}")
-    public @ResponseBody
-    String updateUser(@RequestBody String userInfoToUpdate, @PathVariable int id) {
+    public @ResponseBody String updateUser(@RequestBody String userInfoToUpdate, @PathVariable int id) {
         Gson gson = new Gson();//Helps me parse things from Json quickly
         Properties properties = gson.fromJson(userInfoToUpdate, Properties.class);
         User user = userRepository.findById(id)
@@ -37,7 +36,7 @@ public class UserController {
         return "Success";
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/getUserById/{id}")
     EntityModel<User> getUserById(@PathVariable Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFound(id));
 
