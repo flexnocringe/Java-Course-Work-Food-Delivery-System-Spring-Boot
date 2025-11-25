@@ -36,12 +36,21 @@ public class UserController {
         return "Success";
     }
 
-    @GetMapping("/getUserById/{id}")
-    EntityModel<User> getUserById(@PathVariable Integer id) {
+    @GetMapping(value = "/getUserById/{id}")
+    public @ResponseBody EntityModel<User> getUserById(@PathVariable Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFound(id));
 
         return EntityModel.of(user,
                 linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel(),
                 linkTo(methodOn(UserController.class).getAllUsers()).withRel("allUsers"));
+    }
+
+    @PostMapping(value = "/validateUser")
+    public @ResponseBody EntityModel<User>  validateUser(@RequestBody String userInfoToValidate) {
+        Gson gson = new Gson();
+        Properties properties = gson.fromJson(userInfoToValidate, Properties.class);
+        String username = properties.getProperty("username");
+        String password = properties.getProperty("password");
+        return EntityModel.of(userRepository.findByUsernameAndPassword(username, password));
     }
 }
