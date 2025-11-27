@@ -25,6 +25,7 @@ public class User implements Serializable {
     protected String name;
     protected String surname;
     protected String phoneNumber;
+
     protected LocalDateTime dateCreated;
     protected LocalDateTime dateUpdated;
     protected boolean isAdmin;

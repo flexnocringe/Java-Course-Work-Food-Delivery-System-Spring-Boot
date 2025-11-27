@@ -1,5 +1,6 @@
 package org.example.javacourseworkbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,12 +22,16 @@ public class FoodOrder {
     private int id;
     private String name;
     private Double price;
+    @JsonIgnore
     @ManyToMany
     private List<FoodItem> foodItems = new ArrayList<>();
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Chat chat;
+    @JsonIgnore
     @ManyToOne
     private BasicUser buyer;
+    @JsonIgnore
     @ManyToOne
     private Restaurant restaurant;
     @Enumerated(EnumType.STRING)

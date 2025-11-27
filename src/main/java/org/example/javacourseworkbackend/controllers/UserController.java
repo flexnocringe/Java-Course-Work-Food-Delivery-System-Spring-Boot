@@ -2,7 +2,11 @@ package org.example.javacourseworkbackend.controllers;
 
 import com.google.gson.Gson;
 import org.example.javacourseworkbackend.errorHandling.UserNotFound;
+import org.example.javacourseworkbackend.model.BasicUser;
+import org.example.javacourseworkbackend.model.Driver;
 import org.example.javacourseworkbackend.model.User;
+import org.example.javacourseworkbackend.repositories.BasicUserRepository;
+import org.example.javacourseworkbackend.repositories.DriverRepository;
 import org.example.javacourseworkbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -17,6 +21,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BasicUserRepository basicUserRepository;
+    @Autowired
+    private DriverRepository driverRepository;
 
     @GetMapping(value = "/allUsers")
     public @ResponseBody Iterable<User> getAllUsers() {
@@ -52,5 +60,15 @@ public class UserController {
         String username = properties.getProperty("username");
         String password = properties.getProperty("password");
         return EntityModel.of(userRepository.findByUsernameAndPassword(username, password));
+    }
+
+    @PostMapping(value = "/createNewBasicUser")
+    public @ResponseBody EntityModel<BasicUser> createNewBasicUser(@RequestBody BasicUser user) {
+        return EntityModel.of(basicUserRepository.save(user));
+    }
+
+    @PostMapping(value = "/createNewDriver")
+    public @ResponseBody EntityModel<Driver> createNewDriver(@RequestBody Driver driver) {
+        return EntityModel.of(driverRepository.save(driver));
     }
 }

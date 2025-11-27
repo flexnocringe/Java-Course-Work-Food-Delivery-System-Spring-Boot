@@ -1,5 +1,6 @@
 package org.example.javacourseworkbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,10 +20,13 @@ import java.util.List;
 @Entity
 public class BasicUser extends User {
     protected String address;
+    @JsonIgnore
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<FoodOrder> myOrders;
+    @JsonIgnore
     @OneToMany(mappedBy = "reviewOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<Review> myReviews;
+    @JsonIgnore
     @OneToMany(mappedBy = "feedbackUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<Review> feedback;
 

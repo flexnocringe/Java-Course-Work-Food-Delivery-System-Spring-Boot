@@ -1,5 +1,6 @@
 package org.example.javacourseworkbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,10 +21,13 @@ public class Review {
     private int rating;
     private String text;
     private LocalDateTime dateCreated;
+    @JsonIgnore
     @ManyToOne
     private User reviewOwner;
+    @JsonIgnore
     @ManyToOne
     private BasicUser feedbackUser;
+    @JsonIgnore
     @ManyToOne
     private Chat chat;
 

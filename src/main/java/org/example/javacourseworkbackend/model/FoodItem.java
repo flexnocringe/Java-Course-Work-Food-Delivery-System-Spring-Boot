@@ -1,5 +1,6 @@
 package org.example.javacourseworkbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +28,10 @@ public class FoodItem {
     private List<Allergens> allergens = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private PortionSize portionSize;
+    @JsonIgnore
     @ManyToMany(mappedBy = "foodItems", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<FoodOrder> orderList = new ArrayList<>();
+    @JsonIgnore
     @ManyToOne
     private Restaurant restaurant;
 

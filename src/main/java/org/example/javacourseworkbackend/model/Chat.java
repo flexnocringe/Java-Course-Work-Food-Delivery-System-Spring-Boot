@@ -1,5 +1,6 @@
 package org.example.javacourseworkbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,10 @@ public class Chat {
     private String name;
     private String chatText;
     private LocalDate dateCreated;
+    @JsonIgnore
     @OneToOne(mappedBy ="chat")
     private FoodOrder foodOrder;
+    @JsonIgnore
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Review> messages = new ArrayList<>();
 
