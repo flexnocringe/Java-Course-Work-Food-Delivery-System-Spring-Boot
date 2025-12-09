@@ -24,6 +24,7 @@ public class FoodItem {
     private boolean spicy = false;
     private boolean vegan = false;
     private String ingredients;
+    @ElementCollection(targetClass = Allergens.class)
     @Enumerated(EnumType.STRING)
     private List<Allergens> allergens = new ArrayList<>();
     @Enumerated(EnumType.STRING)

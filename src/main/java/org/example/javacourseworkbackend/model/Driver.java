@@ -18,21 +18,21 @@ import java.time.LocalDateTime;
 @Entity
 public class Driver extends BasicUser {
     private String driverLicence;
-    private LocalDate bDate;
+    private LocalDate birthDate;
     @Enumerated(EnumType.STRING)
     private VechicleType vechicleType;
 
-    public Driver(String username, String password, String name, String surname, String phoneNumber, LocalDateTime dateCreated, String address, String driverLicence, LocalDate bDate, VechicleType vechicleType) {
+    public Driver(String username, String password, String name, String surname, String phoneNumber, LocalDateTime dateCreated, String address, String driverLicence, LocalDate birthDate, VechicleType vechicleType) {
         super(username, password, name, surname, phoneNumber, dateCreated, address);
         this.driverLicence = driverLicence;
-        this.bDate = bDate;
+        this.birthDate = birthDate;
         this.vechicleType = vechicleType;
     }
 
-    public Driver(String username, String password, String name, String surname, String phoneNumber, String address, String driverLicence, LocalDate bDate, VechicleType vechicleType) {
+    public Driver(String username, String password, String name, String surname, String phoneNumber, String address, String driverLicence, LocalDate birthDate, VechicleType vechicleType) {
         super(username, password, name, surname, phoneNumber, address);
         this.driverLicence = driverLicence;
-        this.bDate = bDate;
+        this.birthDate = birthDate;
         this.vechicleType = vechicleType;
     }
 }

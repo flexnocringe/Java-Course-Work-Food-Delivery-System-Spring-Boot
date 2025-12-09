@@ -28,8 +28,6 @@ public class RestaurantController {
     @GetMapping("/getRestaurantById/{id}")
     EntityModel<Restaurant> getRestaurantById(@PathVariable Integer id) {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new UserNotFound(id));
-        return EntityModel.of(restaurant,
-                linkTo(methodOn(RestaurantController.class).getRestaurantById(id)).withSelfRel(),
-                linkTo(methodOn(RestaurantController.class).getAllRestaurants()).withRel("allRestaurants"));
+        return EntityModel.of(restaurant);
     }
 }

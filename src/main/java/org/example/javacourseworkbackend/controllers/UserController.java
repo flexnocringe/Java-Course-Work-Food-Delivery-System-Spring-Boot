@@ -2,14 +2,18 @@ package org.example.javacourseworkbackend.controllers;
 
 import com.google.gson.Gson;
 import org.example.javacourseworkbackend.errorHandling.UserNotFound;
+import org.example.javacourseworkbackend.errorHandling.WrongCridentials;
 import org.example.javacourseworkbackend.model.BasicUser;
 import org.example.javacourseworkbackend.model.Driver;
+import org.example.javacourseworkbackend.model.Salt;
 import org.example.javacourseworkbackend.model.User;
 import org.example.javacourseworkbackend.repositories.BasicUserRepository;
 import org.example.javacourseworkbackend.repositories.DriverRepository;
 import org.example.javacourseworkbackend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Properties;
@@ -26,6 +30,8 @@ public class UserController {
     @Autowired
     private DriverRepository driverRepository;
 
+    private final TextEncryptor passwordEncryptor = Encryptors.text("whatdoyoumean", Salt.getSalt());
+
     @GetMapping(value = "/allUsers")
     public @ResponseBody Iterable<User> getAllUsers() {
         return userRepository.findAll();
@@ -33,7 +39,7 @@ public class UserController {
 
     @PutMapping(value = "/updateUser/{id}")
     public @ResponseBody String updateUser(@RequestBody String userInfoToUpdate, @PathVariable int id) {
-        Gson gson = new Gson();//Helps me parse things from Json quickly
+        Gson gson = new Gson();
         Properties properties = gson.fromJson(userInfoToUpdate, Properties.class);
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFound(id));
@@ -59,16 +65,31 @@ public class UserController {
         Properties properties = gson.fromJson(userInfoToValidate, Properties.class);
         String username = properties.getProperty("username");
         String password = properties.getProperty("password");
-        return EntityModel.of(userRepository.findByUsernameAndPassword(username, password));
+        User user = userRepository.findByUsername(username);
+        if(user==null){
+            throw new UserNotFound();
+        }
+        if(!passwordEncryptor.decrypt(user.getPassword()).equals(password)) {
+            throw new WrongCridentials();
+        }
+        return EntityModel.of(user);
     }
 
     @PostMapping(value = "/createNewBasicUser")
     public @ResponseBody EntityModel<BasicUser> createNewBasicUser(@RequestBody BasicUser user) {
+        user.setPassword(passwordEncryptor.encrypt(user.getPassword()));
         return EntityModel.of(basicUserRepository.save(user));
     }
 
     @PostMapping(value = "/createNewDriver")
     public @ResponseBody EntityModel<Driver> createNewDriver(@RequestBody Driver driver) {
+        driver.setPassword(passwordEncryptor.encrypt(driver.getPassword()));
         return EntityModel.of(driverRepository.save(driver));
+    }
+
+    @PutMapping(value = "/deleteUser")
+    public @ResponseBody String deleteUser(@RequestBody User user) {
+        userRepository.deleteById(user.getId());
+        return "Success";
     }
 }

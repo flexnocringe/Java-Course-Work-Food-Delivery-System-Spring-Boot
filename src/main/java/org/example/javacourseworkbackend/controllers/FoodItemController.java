@@ -9,10 +9,7 @@ import org.example.javacourseworkbackend.repositories.FoodItemRepository;
 import org.example.javacourseworkbackend.repositories.FoodOrderRepository;
 import org.example.javacourseworkbackend.repositories.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Properties;
 
@@ -28,12 +25,10 @@ public class FoodItemController {
         return foodItemRepository.findAll();
     }
 
-    @GetMapping(value = "/restaurantFoodItems")
-    public @ResponseBody Iterable<FoodItem> getRestaurantFoodItems(@RequestBody String restaurantInfo) {
-        Gson gson = new Gson();
-        Properties properties = gson.fromJson(restaurantInfo, Properties.class);
-        Restaurant restaurant = restaurantRepository.findById(Integer.valueOf(properties.getProperty("id")))
-                .orElseThrow(() -> new UserNotFound(Integer.valueOf(properties.getProperty("id"))));
+    @GetMapping(value = "/restaurantFoodItems/{id}")
+    public @ResponseBody Iterable<FoodItem> getRestaurantFoodItems(@PathVariable int id) {
+        Restaurant restaurant = restaurantRepository.findById(id);
+        if(restaurant == null) throw new UserNotFound(id);
         return foodItemRepository.findByRestaurant(restaurant);
     }
 }
