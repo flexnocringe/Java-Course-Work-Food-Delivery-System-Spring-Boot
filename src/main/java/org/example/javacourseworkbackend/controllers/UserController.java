@@ -37,15 +37,16 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PutMapping(value = "/updateUser/{id}")
-    public @ResponseBody String updateUser(@RequestBody String userInfoToUpdate, @PathVariable int id) {
-        Gson gson = new Gson();
-        Properties properties = gson.fromJson(userInfoToUpdate, Properties.class);
-        User user = userRepository.findById(id)
+    @PutMapping(value = "/updateBasicUser/{id}")
+    public @ResponseBody String updateBasicUser(@RequestBody BasicUser updateUser, @PathVariable int id) {
+        BasicUser user = basicUserRepository.findById(id)
                 .orElseThrow(() -> new UserNotFound(id));
-        user.setName(properties.getProperty("name"));
-        user.setSurname(properties.getProperty("surname"));
-
+        user.setUsername(updateUser.getUsername());
+        user.setPassword(passwordEncryptor.encrypt(updateUser.getPassword()));
+        user.setName(updateUser.getName());
+        user.setSurname(updateUser.getSurname());
+        user.setPhoneNumber(updateUser.getPhoneNumber());
+        user.setAddress(updateUser.getAddress());
         userRepository.save(user);
         return "Success";
     }
@@ -71,6 +72,15 @@ public class UserController {
         }
         if(!passwordEncryptor.decrypt(user.getPassword()).equals(password)) {
             throw new WrongCridentials();
+        }
+        user.setPassword(passwordEncryptor.decrypt(user.getPassword()));
+
+        if(user instanceof Driver){
+            user.setType("Driver");
+        }else if(user instanceof BasicUser){
+            user.setType("BasicUser");
+        }else{
+            user.setType("User");
         }
         return EntityModel.of(user);
     }

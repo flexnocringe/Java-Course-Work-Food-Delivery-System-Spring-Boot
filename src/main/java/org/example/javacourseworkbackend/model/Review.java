@@ -21,10 +21,8 @@ public class Review {
     private int rating;
     private String text;
     private LocalDateTime dateCreated;
-    @JsonIgnore
     @ManyToOne
     private User reviewOwner;
-    @JsonIgnore
     @ManyToOne
     private BasicUser feedbackUser;
     @JsonIgnore

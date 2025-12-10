@@ -1,19 +1,25 @@
 package org.example.javacourseworkbackend.controllers;
 
 import com.google.gson.Gson;
-import org.example.javacourseworkbackend.errorHandling.UserNotFound;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import org.example.javacourseworkbackend.model.FoodItem;
 import org.example.javacourseworkbackend.model.FoodOrder;
+import org.example.javacourseworkbackend.model.OrderStatus;
 import org.example.javacourseworkbackend.model.Restaurant;
-import org.example.javacourseworkbackend.model.User;
 import org.example.javacourseworkbackend.repositories.BasicUserRepository;
 import org.example.javacourseworkbackend.repositories.FoodOrderRepository;
 import org.example.javacourseworkbackend.repositories.RestaurantRepository;
-import org.example.javacourseworkbackend.repositories.UserRepository;
+import org.example.javacourseworkbackend.utils.LocalDateAdapter;
+import org.example.javacourseworkbackend.utils.LocalDateTimeAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Properties;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 public class FoodOrderController {
@@ -37,11 +43,21 @@ public class FoodOrderController {
 
     @GetMapping(value = "/getBuyersOrders/{id}")
     public @ResponseBody Iterable<FoodOrder> getBuyersFoodOrders(@PathVariable int id) {
-        return foodOrderRepository.findByBuyer(basicUserRepository.findById(id));
+        return foodOrderRepository.findByBuyer(basicUserRepository.getBasicUserById(id));
     }
 
     @PostMapping(value = "/createNewOrder")
-    public @ResponseBody EntityModel<FoodOrder> createNewOrder(@RequestBody FoodOrder foodOrder) {
+    public @ResponseBody EntityModel<FoodOrder> createNewOrder(@RequestBody String foodOrderInfo) {
+        GsonBuilder build = new GsonBuilder();
+        build.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
+        build.registerTypeAdapter(LocalDate.class, new LocalDateAdapter());
+        Gson gson = build.setPrettyPrinting().create();
+        JsonObject orderInfo = gson.fromJson(foodOrderInfo, JsonObject.class);
+        int userId = orderInfo.get("userId").getAsInt();
+        int restaurantId = orderInfo.get("restaurantId").getAsInt();
+        Double price = orderInfo.get("price").getAsDouble();
+        List<FoodItem> foodItems = gson.fromJson(orderInfo.getAsJsonArray("foodItems"), new TypeToken<List<FoodItem>>(){}.getType());
+        FoodOrder foodOrder = new FoodOrder("Order "+userId+restaurantId+" "+LocalDateTime.now().format(LocalDateTimeAdapter.formatter), price, foodItems, basicUserRepository.getBasicUserById(userId), restaurantRepository.getRestaurantById(restaurantId), OrderStatus.OPEN, LocalDateTime.now());
         return EntityModel.of(foodOrderRepository.save(foodOrder));
     }
 }

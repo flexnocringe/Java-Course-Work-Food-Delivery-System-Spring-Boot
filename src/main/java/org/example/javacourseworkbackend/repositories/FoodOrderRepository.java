@@ -11,4 +11,7 @@ public interface FoodOrderRepository extends JpaRepository<FoodOrder, Integer> {
     List<FoodOrder> findByRestaurant(Restaurant restaurant);
 
     List<FoodOrder> findByBuyer(BasicUser basicUser);
+
+    FoodOrder findById(int id);
+    FoodOrder getFoodOrderById(int id);
 }

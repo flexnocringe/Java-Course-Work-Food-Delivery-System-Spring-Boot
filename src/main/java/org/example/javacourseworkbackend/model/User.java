@@ -19,6 +19,8 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int id;
+    @Transient
+    protected String type;
     @Column(unique = true)
     protected String username;
     protected String password;
