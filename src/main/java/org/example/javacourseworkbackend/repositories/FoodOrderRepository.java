@@ -2,6 +2,7 @@ package org.example.javacourseworkbackend.repositories;
 
 import org.example.javacourseworkbackend.model.BasicUser;
 import org.example.javacourseworkbackend.model.FoodOrder;
+import org.example.javacourseworkbackend.model.OrderStatus;
 import org.example.javacourseworkbackend.model.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,4 +15,6 @@ public interface FoodOrderRepository extends JpaRepository<FoodOrder, Integer> {
 
     FoodOrder findById(int id);
     FoodOrder getFoodOrderById(int id);
+
+    List<FoodOrder> findFoodOrdersByOrderStatus(OrderStatus orderStatus);
 }

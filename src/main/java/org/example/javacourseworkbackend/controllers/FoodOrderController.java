@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import org.example.javacourseworkbackend.model.FoodItem;
-import org.example.javacourseworkbackend.model.FoodOrder;
-import org.example.javacourseworkbackend.model.OrderStatus;
-import org.example.javacourseworkbackend.model.Restaurant;
+import org.example.javacourseworkbackend.model.*;
 import org.example.javacourseworkbackend.repositories.BasicUserRepository;
 import org.example.javacourseworkbackend.repositories.FoodOrderRepository;
 import org.example.javacourseworkbackend.repositories.RestaurantRepository;
@@ -46,6 +43,16 @@ public class FoodOrderController {
         return foodOrderRepository.findByBuyer(basicUserRepository.getBasicUserById(id));
     }
 
+    @GetMapping(value = "/getReadyForPickupOrders")
+    public @ResponseBody Iterable<FoodOrder> getReadyForPickupFoodOrders() {
+        return foodOrderRepository.findFoodOrdersByOrderStatus(OrderStatus.READY_FOR_PICKUP);
+    }
+
+    @GetMapping(value = "/getInDeliveryOrders")
+    public @ResponseBody Iterable<FoodOrder> getInDeliveryFoodOrders() {
+        return foodOrderRepository.findFoodOrdersByOrderStatus(OrderStatus.IN_DELIVERY);
+    }
+
     @PostMapping(value = "/createNewOrder")
     public @ResponseBody EntityModel<FoodOrder> createNewOrder(@RequestBody String foodOrderInfo) {
         GsonBuilder build = new GsonBuilder();
@@ -59,5 +66,22 @@ public class FoodOrderController {
         List<FoodItem> foodItems = gson.fromJson(orderInfo.getAsJsonArray("foodItems"), new TypeToken<List<FoodItem>>(){}.getType());
         FoodOrder foodOrder = new FoodOrder("Order "+userId+restaurantId+" "+LocalDateTime.now().format(LocalDateTimeAdapter.formatter), price, foodItems, basicUserRepository.getBasicUserById(userId), restaurantRepository.getRestaurantById(restaurantId), OrderStatus.OPEN, LocalDateTime.now());
         return EntityModel.of(foodOrderRepository.save(foodOrder));
+    }
+
+    @PutMapping(value="pickupOrder/{id}")
+    public @ResponseBody String pickupOrder(@PathVariable int id, @RequestBody Driver driver) {
+        FoodOrder foodOrder = foodOrderRepository.findById(id);
+        foodOrder.setOrderStatus(OrderStatus.IN_DELIVERY);
+        foodOrder.setDriver(driver);
+        foodOrderRepository.save(foodOrder);
+        return "success";
+    }
+
+    @PutMapping(value="completeOrder/{id}")
+    public @ResponseBody String completeOrder(@PathVariable int id) {
+        FoodOrder foodOrder = foodOrderRepository.findById(id);
+        foodOrder.setOrderStatus(OrderStatus.COMPLETED);
+        foodOrderRepository.save(foodOrder);
+        return "success";
     }
 }

@@ -51,6 +51,24 @@ public class UserController {
         return "Success";
     }
 
+    @PutMapping(value = "/updateDriver/{id}")
+    public @ResponseBody String updateDriver(@RequestBody Driver updateUser, @PathVariable int id) {
+        Driver user = driverRepository.findById(id)
+                .orElseThrow(() -> new UserNotFound(id));
+        user.setUsername(updateUser.getUsername());
+        user.setPassword(passwordEncryptor.encrypt(updateUser.getPassword()));
+        user.setName(updateUser.getName());
+        user.setSurname(updateUser.getSurname());
+        user.setPhoneNumber(updateUser.getPhoneNumber());
+        user.setAddress(updateUser.getAddress());
+        user.setDriverLicence(updateUser.getDriverLicence());
+        user.setVechicleType(updateUser.getVechicleType());
+        user.setBirthDate(updateUser.getBirthDate());
+        userRepository.save(user);
+        return "Success";
+    }
+
+
     @GetMapping(value = "/getUserById/{id}")
     public @ResponseBody EntityModel<User> getUserById(@PathVariable Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFound(id));

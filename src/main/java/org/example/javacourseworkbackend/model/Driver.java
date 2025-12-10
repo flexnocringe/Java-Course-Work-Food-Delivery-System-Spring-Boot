@@ -1,8 +1,7 @@
 package org.example.javacourseworkbackend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +21,9 @@ public class Driver extends BasicUser {
     private LocalDate birthDate;
     @Enumerated(EnumType.STRING)
     private VechicleType vechicleType;
+    @JsonIgnore
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FoodOrder> driverOrders;
 
     public Driver(String username, String password, String name, String surname, String phoneNumber, LocalDateTime dateCreated, String address, String driverLicence, LocalDate birthDate, VechicleType vechicleType) {
         super(username, password, name, surname, phoneNumber, dateCreated, address);

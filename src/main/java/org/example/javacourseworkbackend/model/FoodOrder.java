@@ -33,6 +33,9 @@ public class FoodOrder {
     private BasicUser buyer;
     @JsonIgnore
     @ManyToOne
+    private Driver driver;
+    @JsonIgnore
+    @ManyToOne
     private Restaurant restaurant;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
