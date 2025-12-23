@@ -1,4 +1,4 @@
-package org.example.javacourseworkbackend.model;
+package org.example.javacourseworkbackend.utils;
 
 public class Salt {
     private static String salt = "8cdee2119b35c31f";

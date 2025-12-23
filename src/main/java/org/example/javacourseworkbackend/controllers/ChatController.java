@@ -1,10 +1,9 @@
 package org.example.javacourseworkbackend.controllers;
 
 import com.google.gson.Gson;
-import org.example.javacourseworkbackend.model.BasicUser;
 import org.example.javacourseworkbackend.model.Chat;
 import org.example.javacourseworkbackend.model.FoodOrder;
-import org.example.javacourseworkbackend.model.Review;
+import org.example.javacourseworkbackend.model.Message;
 import org.example.javacourseworkbackend.repositories.BasicUserRepository;
 import org.example.javacourseworkbackend.repositories.ChatRepository;
 import org.example.javacourseworkbackend.repositories.FoodOrderRepository;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Properties;
 
 @RestController
@@ -29,7 +27,7 @@ public class ChatController {
     private BasicUserRepository basicUserRepository;
 
     @GetMapping(value = "getMessagesForOrder/{id}")
-    public @ResponseBody Iterable<Review> getMessagesForOrder(@PathVariable int id) {
+    public @ResponseBody Iterable<Message> getMessagesForOrder(@PathVariable int id) {
         Chat chat = chatRepository.findByFoodOrderId(id);
         if(chat == null){
             FoodOrder order = foodOrderRepository.findById(id);
@@ -45,11 +43,11 @@ public class ChatController {
         Gson gson = new Gson();
         Properties properties = gson.fromJson(info, Properties.class);
         String messageText = properties.getProperty("messageText");
-        var commentOwner = basicUserRepository.getBasicUserById(Integer.valueOf(properties.getProperty("userId")));
+        var messageOwner = basicUserRepository.getBasicUserById(Integer.valueOf(properties.getProperty("userId")));
         var order = foodOrderRepository.getFoodOrderById(Integer.valueOf(properties.getProperty("orderId")));
 
-        Review review = new Review(messageText, LocalDateTime.now(), commentOwner, order.getChat());
-        reviewRepository.save(review);
+        Message message = new Message(messageText, LocalDateTime.now(), messageOwner, order.getChat());
+        reviewRepository.save(message);
 
         return "success";
 

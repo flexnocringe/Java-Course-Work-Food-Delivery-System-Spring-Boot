@@ -19,20 +19,25 @@ public class FoodItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true)
     private String name;
     private Double price;
     private boolean spicy = false;
     private boolean vegan = false;
     private String ingredients;
     @ElementCollection(targetClass = Allergens.class)
+    @CollectionTable(
+            name = "fooditem_allergens",
+            joinColumns = @JoinColumn(name = "fooditem_id")
+    )
     @Enumerated(EnumType.STRING)
+    @Column(name = "allergens")
     private List<Allergens> allergens = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private PortionSize portionSize;
     @JsonIgnore
-    @ManyToMany(mappedBy = "foodItems", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "foodItems", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<FoodOrder> orderList = new ArrayList<>();
-    @JsonIgnore
     @ManyToOne
     private Restaurant restaurant;
 

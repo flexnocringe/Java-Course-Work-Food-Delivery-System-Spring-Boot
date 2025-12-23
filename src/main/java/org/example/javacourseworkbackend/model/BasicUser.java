@@ -24,11 +24,8 @@ public class BasicUser extends User {
     @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     protected List<FoodOrder> myOrders;
     @JsonIgnore
-    @OneToMany(mappedBy = "reviewOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    protected List<Review> myReviews;
-    @JsonIgnore
-    @OneToMany(mappedBy = "feedbackUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    protected List<Review> feedback;
+    @OneToMany(mappedBy = "messageOwner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    protected List<Message> myMessages;
 
     public BasicUser(String username, String password, String name, String surname, String phoneNumber) {
         super(username, password, name, surname, phoneNumber);

@@ -19,18 +19,17 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int id;
-    @Transient
-    protected String type;
     @Column(unique = true)
     protected String username;
     protected String password;
     protected String name;
     protected String surname;
     protected String phoneNumber;
-
     protected LocalDateTime dateCreated;
     protected LocalDateTime dateUpdated;
     protected boolean isAdmin;
+    @Transient
+    protected String type;
 
     public User(String username, String password, String name, String surname, String phoneNumber, LocalDateTime dateCreated, boolean isAdmin) {
         this.username = username;
@@ -69,8 +68,10 @@ public class User implements Serializable {
         this.surname = surname;
         this.phoneNumber = phoneNumber;
     }
+
     @Override
     public String toString() {
         return this.name;
     }
+
 }

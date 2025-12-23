@@ -2,7 +2,10 @@ package org.example.javacourseworkbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,12 +23,11 @@ public class Chat {
     private String name;
     private String chatText;
     private LocalDate dateCreated;
-    @JsonIgnore
     @OneToOne(mappedBy ="chat")
     private FoodOrder foodOrder;
     @JsonIgnore
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Review> messages = new ArrayList<>();
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<Message> messages = new ArrayList<>();
 
     public Chat(String name, LocalDate dateCreated, FoodOrder foodOrder) {
         this.name = name;

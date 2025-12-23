@@ -1,17 +1,12 @@
 package org.example.javacourseworkbackend.controllers;
 
-import com.google.gson.Gson;
 import org.example.javacourseworkbackend.errorHandling.UserNotFound;
 import org.example.javacourseworkbackend.model.FoodItem;
-import org.example.javacourseworkbackend.model.FoodOrder;
 import org.example.javacourseworkbackend.model.Restaurant;
 import org.example.javacourseworkbackend.repositories.FoodItemRepository;
-import org.example.javacourseworkbackend.repositories.FoodOrderRepository;
 import org.example.javacourseworkbackend.repositories.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Properties;
 
 @RestController
 public class FoodItemController {

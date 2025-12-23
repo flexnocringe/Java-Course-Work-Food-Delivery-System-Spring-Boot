@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import org.example.javacourseworkbackend.errorHandling.FoodItemNotFound;
 import org.example.javacourseworkbackend.model.*;
 import org.example.javacourseworkbackend.repositories.BasicUserRepository;
+import org.example.javacourseworkbackend.repositories.FoodItemRepository;
 import org.example.javacourseworkbackend.repositories.FoodOrderRepository;
 import org.example.javacourseworkbackend.repositories.RestaurantRepository;
 import org.example.javacourseworkbackend.utils.LocalDateAdapter;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,6 +29,8 @@ public class FoodOrderController {
     private RestaurantRepository restaurantRepository;
     @Autowired
     private BasicUserRepository basicUserRepository;
+    @Autowired
+    private FoodItemRepository foodItemRepository;
 
     @GetMapping(value = "/allOrders")
     public @ResponseBody Iterable<FoodOrder> getAllFoodOrders() {
@@ -45,12 +50,12 @@ public class FoodOrderController {
 
     @GetMapping(value = "/getReadyForPickupOrders")
     public @ResponseBody Iterable<FoodOrder> getReadyForPickupFoodOrders() {
-        return foodOrderRepository.findFoodOrdersByOrderStatus(OrderStatus.READY_FOR_PICKUP);
+        return foodOrderRepository.findFoodOrdersByOrderStatus(OrderStatus.READY_FOR_PICKUP.toString());
     }
 
     @GetMapping(value = "/getInDeliveryOrders")
     public @ResponseBody Iterable<FoodOrder> getInDeliveryFoodOrders() {
-        return foodOrderRepository.findFoodOrdersByOrderStatus(OrderStatus.IN_DELIVERY);
+        return foodOrderRepository.findFoodOrdersByOrderStatus(OrderStatus.IN_DELIVERY.toString());
     }
 
     @PostMapping(value = "/createNewOrder")
@@ -63,8 +68,12 @@ public class FoodOrderController {
         int userId = orderInfo.get("userId").getAsInt();
         int restaurantId = orderInfo.get("restaurantId").getAsInt();
         Double price = orderInfo.get("price").getAsDouble();
-        List<FoodItem> foodItems = gson.fromJson(orderInfo.getAsJsonArray("foodItems"), new TypeToken<List<FoodItem>>(){}.getType());
-        FoodOrder foodOrder = new FoodOrder("Order "+userId+restaurantId+" "+LocalDateTime.now().format(LocalDateTimeAdapter.formatter), price, foodItems, basicUserRepository.getBasicUserById(userId), restaurantRepository.getRestaurantById(restaurantId), OrderStatus.OPEN, LocalDateTime.now());
+        List<Integer> foodItem = gson.fromJson(orderInfo.getAsJsonArray("foodItem"), new TypeToken<List<Integer>>(){}.getType());
+        List<FoodItem> foodItems = new ArrayList<>();
+        for(Integer id : foodItem){
+            foodItems.add(foodItemRepository.findById(id).orElseThrow(()-> new FoodItemNotFound()));
+        }
+        FoodOrder foodOrder = new FoodOrder("Order "+userId+restaurantId+" "+LocalDateTime.now().format(LocalDateTimeAdapter.formatter), price, foodItems, basicUserRepository.getBasicUserById(userId), null, restaurantRepository.getRestaurantById(restaurantId), OrderStatus.OPEN, LocalDateTime.now());
         return EntityModel.of(foodOrderRepository.save(foodOrder));
     }
 

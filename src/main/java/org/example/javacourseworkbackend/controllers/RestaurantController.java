@@ -1,9 +1,7 @@
 package org.example.javacourseworkbackend.controllers;
 
 import org.example.javacourseworkbackend.errorHandling.UserNotFound;
-import org.example.javacourseworkbackend.model.FoodOrder;
 import org.example.javacourseworkbackend.model.Restaurant;
-import org.example.javacourseworkbackend.model.User;
 import org.example.javacourseworkbackend.repositories.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 public class RestaurantController {
